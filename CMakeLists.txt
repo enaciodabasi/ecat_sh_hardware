@@ -3,7 +3,7 @@ project(ecat_sh_hardware VERSION 0.1 LANGUAGES C CXX)
 
 set(CXX_STANDARD 23)
 
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /usr/local /opt/ros/humble/include/)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /usr /usr/local /opt/ros/humble/include/)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra  -Werror=return-type)
@@ -24,6 +24,7 @@ find_package(rosidl_default_runtime REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 find_package(ipc_handlers REQUIRED)
 find_package(timespec_chrono_conversions REQUIRED)
+find_package(cppzmq REQUIRED)
 
 message(ipc_handlers_INCLUDE_DIRS="${IPC_HANDLERS_INCLUDE_DIRS}")
 

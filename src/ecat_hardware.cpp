@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 #include <signal.h>
+#include <array>
 #include <iostream>
 
 constexpr auto SLAVE_START_POSITION = 0;
@@ -33,7 +34,7 @@ struct
   uint current_velocity;
 } RightMotorEthercatDataOffsets;
 
-struct IoChannelOffsets
+/* struct IoChannelOffsets
 {
   uint channel1;
   uint channel2;
@@ -51,14 +52,12 @@ struct IoChannelOffsets
   uint channel14;
   uint channel15;
   uint channel16;
-};
+}; */
 
-using IoChannelBitPositions = IoChannelOffsets;
-
-IoChannelOffsets digitalOutputOffsets;
-IoChannelBitPositions digitalOutputBitPosition;
-IoChannelOffsets digitalInputOffsets;
-IoChannelBitPositions digitalInputBitPosition;
+std::array<uint, 16> digitalOutputOffsets;
+std::array<uint, 16> digitalOutputBitPosition;
+std::array<uint, 16> digitalInputOffsets;
+std::array<uint, 16> digitalInputBitPosition;
 
 /*
 const ec_pdo_entry_reg_t lifterDomainRegistries[] = {
@@ -168,14 +167,12 @@ ec_pdo_info_t digital_output_pdos[] = {
 
 };
 
-ec_sync_info_t digital_output_syncs[] = {
-    {0, EC_DIR_OUTPUT, 8, digital_output_pdos + 0, EC_WD_ENABLE},
-    {1, EC_DIR_OUTPUT, 8, digital_output_pdos + 8, EC_WD_ENABLE},
-    {0xff}
-};
+ec_sync_info_t digital_output_syncs[] = { { 0, EC_DIR_OUTPUT, 8, digital_output_pdos + 0, EC_WD_ENABLE },
+                                          { 1, EC_DIR_OUTPUT, 8, digital_output_pdos + 8, EC_WD_ENABLE },
+                                          { 0xff } };
 
-
-/* ec_sync_info_t digital_output_syncs[] = { { 0, EC_DIR_OUTPUT, 16, digital_output_pdos + 0, EC_WD_ENABLE }, { 0xff } };
+/* ec_sync_info_t digital_output_syncs[] = { { 0, EC_DIR_OUTPUT, 16, digital_output_pdos + 0, EC_WD_ENABLE }, { 0xff }
+ * };
  */
 const ec_pdo_entry_reg_t domainRegistries[] = {
   { SLAVE_ALIAS, SLAVE_START_POSITION, SLAVE_VENDOR_ID, SLAVE_PRODUCT_ID, 0x6040, 0x00,
@@ -206,70 +203,74 @@ const ec_pdo_entry_reg_t domainRegistries[] = {
     &LeftMotorEthercatDataOffsets.current_position },
   { SLAVE_ALIAS, SLAVE_START_POSITION + 1, SLAVE_VENDOR_ID, SLAVE_PRODUCT_ID, 0x606C, 0x00,
     &LeftMotorEthercatDataOffsets.current_velocity },
+  {}
+};
+
+const ec_pdo_entry_reg_t digitalIoDomainRegistries[] = {
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6000, 0x01,
-    &digitalInputOffsets.channel1, &digitalInputBitPosition.channel1 },
+    &digitalInputOffsets[0], &digitalInputBitPosition[0] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6010, 0x01,
-    &digitalInputOffsets.channel2, &digitalInputBitPosition.channel2 },
+    &digitalInputOffsets[1], &digitalInputBitPosition[1] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6020, 0x01,
-    &digitalInputOffsets.channel3, &digitalInputBitPosition.channel3 },
+    &digitalInputOffsets[2], &digitalInputBitPosition[2] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6030, 0x01,
-    &digitalInputOffsets.channel4, &digitalInputBitPosition.channel4 },
+    &digitalInputOffsets[3], &digitalInputBitPosition[3] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6040, 0x01,
-    &digitalInputOffsets.channel5, &digitalInputBitPosition.channel5 },
+    &digitalInputOffsets[4], &digitalInputBitPosition[4] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6050, 0x01,
-    &digitalInputOffsets.channel6, &digitalInputBitPosition.channel6 },
+    &digitalInputOffsets[5], &digitalInputBitPosition[5] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6060, 0x01,
-    &digitalInputOffsets.channel7, &digitalInputBitPosition.channel7 },
+    &digitalInputOffsets[6], &digitalInputBitPosition[6] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6070, 0x01,
-    &digitalInputOffsets.channel8, &digitalInputBitPosition.channel8 },
+    &digitalInputOffsets[7], &digitalInputBitPosition[7] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6080, 0x01,
-    &digitalInputOffsets.channel9, &digitalInputBitPosition.channel9 },
+    &digitalInputOffsets[8], &digitalInputBitPosition[8] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x6090, 0x01,
-    &digitalInputOffsets.channel10, &digitalInputBitPosition.channel10 },
+    &digitalInputOffsets[9], &digitalInputBitPosition[9] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x60a0, 0x01,
-    &digitalInputOffsets.channel11, &digitalInputBitPosition.channel11 },
+    &digitalInputOffsets[10], &digitalInputBitPosition[10] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x60b0, 0x01,
-    &digitalInputOffsets.channel12, &digitalInputBitPosition.channel12 },
+    &digitalInputOffsets[11], &digitalInputBitPosition[11] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x60c0, 0x01,
-    &digitalInputOffsets.channel13, &digitalInputBitPosition.channel13 },
+    &digitalInputOffsets[12], &digitalInputBitPosition[12] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x60d0, 0x01,
-    &digitalInputOffsets.channel14, &digitalInputBitPosition.channel14 },
+    &digitalInputOffsets[13], &digitalInputBitPosition[13] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x60e0, 0x01,
-    &digitalInputOffsets.channel15, &digitalInputBitPosition.channel15 },
+    &digitalInputOffsets[14], &digitalInputBitPosition[14] },
   { DIGITAL_INPUT_ALIAS, DIGITAL_INPUT_START_POSITION, DIGITAL_INPUT_VENDOR_ID, DIGITAL_INPUT_PRODUCT_ID, 0x60f0, 0x01,
-    &digitalInputOffsets.channel16, &digitalInputBitPosition.channel16 },
+    &digitalInputOffsets[15], &digitalInputBitPosition[15] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7000,
-    0x01, &digitalOutputOffsets.channel1, &digitalOutputBitPosition.channel1 },
+    0x01, &digitalOutputOffsets[0], &digitalOutputBitPosition[0] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7010,
-    0x01, &digitalOutputOffsets.channel2, &digitalOutputBitPosition.channel2 },
+    0x01, &digitalOutputOffsets[1], &digitalOutputBitPosition[1] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7020,
-    0x01, &digitalOutputOffsets.channel3, &digitalOutputBitPosition.channel3 },
+    0x01, &digitalOutputOffsets[2], &digitalOutputBitPosition[2] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7030,
-    0x01, &digitalOutputOffsets.channel4, &digitalOutputBitPosition.channel4 },
+    0x01, &digitalOutputOffsets[3], &digitalOutputBitPosition[3] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7040,
-    0x01, &digitalOutputOffsets.channel5, &digitalOutputBitPosition.channel5 },
+    0x01, &digitalOutputOffsets[4], &digitalOutputBitPosition[4] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7050,
-    0x01, &digitalOutputOffsets.channel6, &digitalOutputBitPosition.channel6 },
+    0x01, &digitalOutputOffsets[5], &digitalOutputBitPosition[5] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7060,
-    0x01, &digitalOutputOffsets.channel7, &digitalOutputBitPosition.channel7 },
+    0x01, &digitalOutputOffsets[6], &digitalOutputBitPosition[6] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7070,
-    0x01, &digitalOutputOffsets.channel8, &digitalOutputBitPosition.channel8 },
+    0x01, &digitalOutputOffsets[7], &digitalOutputBitPosition[7] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7080,
-    0x01, &digitalOutputOffsets.channel9, &digitalOutputBitPosition.channel8 },
+    0x01, &digitalOutputOffsets[8], &digitalOutputBitPosition[8] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x7090,
-    0x01, &digitalOutputOffsets.channel10, &digitalOutputBitPosition.channel10 },
+    0x01, &digitalOutputOffsets[9], &digitalOutputBitPosition[9] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x70a0,
-    0x01, &digitalOutputOffsets.channel11, &digitalOutputBitPosition.channel11 },
+    0x01, &digitalOutputOffsets[10], &digitalOutputBitPosition[10] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x70b0,
-    0x01, &digitalOutputOffsets.channel12, &digitalOutputBitPosition.channel12 },
+    0x01, &digitalOutputOffsets[11], &digitalOutputBitPosition[11] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x70c0,
-    0x01, &digitalOutputOffsets.channel13, &digitalOutputBitPosition.channel13 },
+    0x01, &digitalOutputOffsets[12], &digitalOutputBitPosition[12] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x70d0,
-    0x01, &digitalOutputOffsets.channel14, &digitalOutputBitPosition.channel14 },
+    0x01, &digitalOutputOffsets[13], &digitalOutputBitPosition[13] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x70e0,
-    0x01, &digitalOutputOffsets.channel15, &digitalOutputBitPosition.channel15 },
+    0x01, &digitalOutputOffsets[14], &digitalOutputBitPosition[14] },
   { DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION, DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID, 0x70f0,
-    0x01, &digitalOutputOffsets.channel16, &digitalOutputBitPosition.channel16 },
+    0x01, &digitalOutputOffsets[15], &digitalOutputBitPosition[15] },
   {}
 };
 
@@ -284,8 +285,10 @@ int main(int argc, char** argv)
 {
   ec_master_t* masterPtr = nullptr;
   ec_domain_t* domainPtr = nullptr;
+  ec_domain_t* digitalIoDomainPtr = nullptr;
   ec_slave_config_t* slaveConfigPtr = nullptr;
   uint8_t* domainProcessData = nullptr;
+  uint8_t* digitalIoDomainProcessData = nullptr;
 
   masterPtr = ecrt_request_master(0);
   if (masterPtr == nullptr)
@@ -295,6 +298,12 @@ int main(int argc, char** argv)
 
   domainPtr = ecrt_master_create_domain(masterPtr);
   if (domainPtr == nullptr)
+  {
+    return 1;
+  }
+
+  digitalIoDomainPtr = ecrt_master_create_domain(masterPtr);
+  if (digitalIoDomainPtr == nullptr)
   {
     return 1;
   }
@@ -340,7 +349,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-    slaveConfigPtr = ecrt_master_slave_config(masterPtr, DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION,
+  slaveConfigPtr = ecrt_master_slave_config(masterPtr, DIGITAL_OUTPUT_ALIAS, DIGITAL_OUTPUT_START_POSITION,
                                             DIGITAL_OUTPUT_VENDOR_ID, DIGITAL_OUTPUT_PRODUCT_ID);
   configurePdosRes = ecrt_slave_config_pdos(slaveConfigPtr, EC_END, digital_output_syncs);
   
@@ -358,7 +367,12 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  
+  registerDomainEntriesRes = ecrt_domain_reg_pdo_entry_list(digitalIoDomainPtr, digitalIoDomainRegistries);
+  if(registerDomainEntriesRes != 0)
+  {
+    std::cout << "Could not register digital IO PDO list." << std::endl;
+    return 1;
+  }
 
   // Set current thread scheduler and priority:
 
@@ -396,6 +410,12 @@ int main(int argc, char** argv)
   if (!(domainProcessData = ecrt_domain_data(domainPtr)))
   {
     std::cout << "Could not create domain data" << std::endl;
+    return 1;
+  }
+
+  if(!(digitalIoDomainProcessData = ecrt_domain_data(digitalIoDomainPtr)))
+  {
+    std::cout << "Could not create digital IO domain data" << std::endl;
     return 1;
   }
 
@@ -507,14 +527,14 @@ int main(int argc, char** argv)
       leftWheelShData.status_word = leftWheelData.status_word;
       leftWheelShData.current_position = leftWheelData.current_position;
       leftWheelShData.current_velocity = leftWheelData.current_velocity;
-      //leftWheelData.status_word = leftWheelShData.status_word;
-      //leftWheelData.current_position = leftWheelShData.current_position;
-      //leftWheelData.current_velocity = leftWheelShData.current_velocity;
+      // leftWheelData.status_word = leftWheelShData.status_word;
+      // leftWheelData.current_position = leftWheelShData.current_position;
+      // leftWheelData.current_velocity = leftWheelShData.current_velocity;
 
       leftWheelData.control_word = leftWheelShData.control_word;
       leftWheelData.target_position = leftWheelShData.target_position;
       leftWheelData.target_velocity = leftWheelShData.target_velocity;
- 
+
       sharedMemoryHandler.unlock();
     }
 
@@ -525,8 +545,7 @@ int main(int argc, char** argv)
     writeToSlave(domainProcessData, LeftMotorEthercatDataOffsets.control_word, leftWheelData.control_word);
     writeToSlave(domainProcessData, LeftMotorEthercatDataOffsets.operation_mode, leftWheelData.operation_mode);
     writeToSlave(domainProcessData, LeftMotorEthercatDataOffsets.target_velocity, leftWheelData.target_velocity);
-    
-    
+
     clock_gettime(CLOCK_MONOTONIC, &distributedClockHelper.currentTime);
     if (distributedClockHelper.referenceClockCounter)
     {
